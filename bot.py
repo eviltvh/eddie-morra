@@ -587,13 +587,13 @@ def main():
     scheduler.add_job(daily_tick, "cron", args=[app], hour=0, minute=1)
 
     async def post_init(application: Application):
+        scheduler.start()
         users = db.get_all_active_users()
         for u in users:
             await schedule_user(application, scheduler, u["chat_id"])
         log.info(f"Startup: {len(users)} usuarios programados")
 
     app.post_init = post_init
-    scheduler.start()
 
     log.info("🧠 Eddie Morra Bot iniciado.")
     app.run_polling(drop_pending_updates=True)
